@@ -108,17 +108,12 @@ function buildClientFallbackStrategy(formData: FormData, plan: Plan) {
     ],
     servicesCombo: [
       {
-        name: 'Configuración de Embudo WhatsApp Pro',
-        description: 'Plantillas y respuestas automáticas para cierre de ventas.',
-        price: 0
-      },
-      {
-        name: 'Pack de Creativos de Neuroventas',
-        description: 'Diseño de copies e ideas de anuncios de alta conversión.',
-        price: 0
+        name: `Generación de estrategia ${plan.name}`,
+        description: 'Estrategia personalizada generada para tu negocio.',
+        price: plan.price
       }
     ],
-    totalPrice: 0,
+    totalPrice: plan.price,
     estimatedMetrics: [
       {
         name: 'Crecimiento estimado de ventas',

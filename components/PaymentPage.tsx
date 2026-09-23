@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plan, User } from '../types';
 import { ArrowLeft, ShieldCheck, CreditCard, QrCode } from './icons';
 import { createStripeCheckoutSession } from '../services/database';
+import { supabaseUrl } from '../services/supabaseClient';
 
 interface PaymentPageProps {
   plan: Plan;
@@ -11,7 +12,7 @@ interface PaymentPageProps {
   onPaymentSuccess: () => void; // Para flujo manual QR / Dev
 }
 
-const QR_CODE_IMAGE_URL = 'https://suusxdmjdrhcfimbkasy.supabase.co/storage/v1/object/public/public_assets/qr-bbva.jpg';
+const QR_CODE_IMAGE_URL = `${supabaseUrl}/storage/v1/object/public/public_assets/qr-bbva.jpg`;
 
 const PaymentPage: React.FC<PaymentPageProps> = ({ plan, user, onBack, onPaymentSuccess }) => {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'qr'>('card');

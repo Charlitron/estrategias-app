@@ -1,9 +1,10 @@
 
+/// <reference types="vite/client" />
+
 import { createClient } from '@supabase/supabase-js';
 
-// URL y Key de Charlitron
-export const supabaseUrl = 'https://suusxdmjdrhcfimbkasy.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1dXN4ZG1qZHJoY2ZpbWJrYXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MjgzOTYsImV4cCI6MjA3NzAwNDM5Nn0.C4Zju8ZBzDyRtvptYD94t4k_zsxJc8qBMoZ32Ha5q_E';
+export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL and Anon Key are required.');

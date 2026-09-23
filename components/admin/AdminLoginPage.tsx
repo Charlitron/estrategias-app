@@ -59,7 +59,7 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess }) => {
       console.error("Login Error:", err);
       let msg = err.message || 'Credenciales incorrectas o error inesperado.';
       if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('ERR_NAME_NOT_RESOLVED')) {
-        msg = "No se pudo conectar con el servidor de Supabase (suusxdmjdrhcfimbkasy.supabase.co). El servidor o la URL de Supabase configurada no existe o no responde.";
+        msg = 'No se pudo conectar con el servidor de Supabase. Verifica la URL configurada y vuelve a intentar.';
       }
       setError(msg);
       setLoading(false);

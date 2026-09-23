@@ -84,6 +84,7 @@ function buildFallbackStrategy(formData: any, plan: any) {
   const clienteIdeal = formData?.clienteIdeal || formData?.publicoObjetivo || 'Consumidores locales en México';
   const presupuesto = formData?.presupuesto || 'Flexible';
   const objetivo = formData?.objetivo || 'Aumentar ventas e incrementar clientes calificados';
+  const planPrice = Number(plan?.price) || 0;
 
   return {
     strategyTitle: `Plan Maestro de Escalamiento para ${giro} (Charlitron 2.1)`,
@@ -187,17 +188,12 @@ function buildFallbackStrategy(formData: any, plan: any) {
     ],
     servicesCombo: [
       {
-        name: 'Configuración de Embudo WhatsApp Pro',
-        description: 'Plantillas y respuestas automáticas para cierre de ventas.',
-        price: 0
-      },
-      {
-        name: 'Pack de Creativos de Neuroventas',
-        description: 'Diseño de copies e ideas de anuncios de alta conversión.',
-        price: 0
+        name: `Generación de estrategia ${planName}`,
+        description: 'Estrategia personalizada generada para tu negocio.',
+        price: planPrice
       }
     ],
-    totalPrice: 0,
+    totalPrice: planPrice,
     estimatedMetrics: [
       {
         name: 'Crecimiento estimado de ventas',
@@ -300,9 +296,16 @@ No se cargó conocimiento externo. Usa solo CORE.
         }
       });
 
-      const responseText = response.text || '';
+      const generated = JSON.parse(response.text || '{}');
+      const planPrice = Number(plan?.price) || 0;
+      generated.servicesCombo = [{
+        name: `Generación de estrategia ${plan?.name || 'seleccionada'}`,
+        description: 'Estrategia personalizada generada para tu negocio.',
+        price: planPrice
+      }];
+      generated.totalPrice = planPrice;
       return res.json({
-        content: responseText,
+        content: JSON.stringify(generated),
         groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks,
         knowledgeSource: sourceTag === 'DB' ? 'DB' : 'CORE'
       });
