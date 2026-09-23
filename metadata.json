@@ -1,0 +1,8 @@
+{
+  "name": "Charlitron: Tu Estratega de Marketing IA",
+  "description": "Tu plan de marketing experto, en minutos. Charlitron es la primera IA entrenada con casos de éxito reales en México para generar estrategias de venta que funcionan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
