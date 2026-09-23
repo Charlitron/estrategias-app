@@ -15,6 +15,17 @@ interface ResultsPageProps {
   onFeedbackSubmit: (rating: number, comment: string) => void;
 }
 
+const PLAN_PRICES: Record<string, number> = {
+  'Básico': 500,
+  'Plus': 1000,
+  'Premium': 2000,
+};
+
+const getEffectivePrice = (result: StrategyResult): number => {
+  if (Number(result.totalPrice) > 0) return Number(result.totalPrice);
+  return PLAN_PRICES[result.planName] || Number(result.servicesCombo?.[0]?.price) || 0;
+};
+
 const LoadingSpinner: React.FC = () => {
   const [loadingStep, setLoadingStep] = useState(0);
   const loadingMessages = [
@@ -334,13 +345,15 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ result, isLoading, error, onR
       }
   
       if (result.servicesCombo) {
+          const effectivePrice = getEffectivePrice(result);
           drawSectionHeader('Cotización Detallada');
           result.servicesCombo.forEach(item => {
               checkPageBreak(15);
               pdf.setFontSize(11);
               pdf.setFont('helvetica', 'bold');
               pdf.setTextColor(31, 41, 55);
-              const priceText = `$${item.price.toLocaleString('es-MX')}`;
+              const itemPrice = Number(item.price) > 0 ? item.price : effectivePrice;
+              const priceText = `$${itemPrice.toLocaleString('es-MX')}`;
               const priceWidth = pdf.getStringUnitWidth(priceText) * 11 / pdf.internal.scaleFactor;
               pdf.text(item.name, margin, y, { maxWidth: contentWidth - priceWidth - 5 });
               pdf.text(priceText, pageWidth - margin, y, { align: 'right' });
@@ -362,7 +375,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ result, isLoading, error, onR
           pdf.setFontSize(20);
           pdf.setFont('helvetica', 'bold');
           pdf.setTextColor(202, 138, 4);
-          pdf.text(`$${result.totalPrice.toLocaleString('es-MX')} MXN`, pageWidth - margin, y, { align: 'right' });
+          pdf.text(`$${effectivePrice.toLocaleString('es-MX')} MXN`, pageWidth - margin, y, { align: 'right' });
           y += 15;
       }
   
@@ -434,6 +447,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ result, isLoading, error, onR
           <div className="text-center mb-6">
             <p className="text-amber-600 text-lg font-semibold flex items-center justify-center gap-2">
                 ¡Listo! Charlitron ha terminado.
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">PDF-PRICE-FIX</span>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                     result.knowledge_source === 'DB' ? 'bg-green-500/20 text-green-500' : 
                     result.knowledge_source === 'HYBRID' ? 'bg-amber-500/20 text-amber-600' : 'bg-blue-500/20 text-blue-600'
@@ -581,14 +595,14 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ result, isLoading, error, onR
                         <p className="font-semibold text-gray-800">{item.name}</p>
                         <p className="text-sm text-gray-500">{item.description}</p>
                     </div>
-                    <p className="font-semibold text-gray-900 text-lg whitespace-nowrap">${item.price.toLocaleString('es-MX')}</p>
+                    <p className="font-semibold text-gray-900 text-lg whitespace-nowrap">${(Number(item.price) > 0 ? item.price : getEffectivePrice(result)).toLocaleString('es-MX')}</p>
                   </div>
                 ))}
               </div>
               <div className="flex justify-end items-center text-right mt-6">
                   <div>
                     <p className="text-gray-500 font-semibold">TOTAL A INVERTIR:</p>
-                    <p className="text-4xl font-extrabold text-amber-600">${result.totalPrice.toLocaleString('es-MX')} <span className="text-2xl font-bold text-gray-800">MXN</span></p>
+                    <p className="text-4xl font-extrabold text-amber-600">${getEffectivePrice(result).toLocaleString('es-MX')} <span className="text-2xl font-bold text-gray-800">MXN</span></p>
                   </div>
               </div>
             </div>

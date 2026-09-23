@@ -6,8 +6,20 @@ interface PdfDocumentProps {
   result: StrategyResult;
 }
 
+const PLAN_PRICES: Record<string, number> = {
+  'Básico': 500,
+  'Plus': 1000,
+  'Premium': 2000,
+};
+
+const getEffectivePrice = (result: StrategyResult): number => {
+  if (Number(result.totalPrice) > 0) return Number(result.totalPrice);
+  return PLAN_PRICES[result.planName] || Number(result.servicesCombo?.[0]?.price) || 0;
+};
+
 const PdfDocument = forwardRef<HTMLDivElement, PdfDocumentProps>(({ result }, ref) => {
   if (!result) return null;
+  const effectivePrice = getEffectivePrice(result);
 
   return (
     <div ref={ref} className="bg-white p-12 font-sans text-gray-800" style={{ fontFamily: 'Inter, sans-serif', width: '800px' }}>
@@ -85,7 +97,7 @@ const PdfDocument = forwardRef<HTMLDivElement, PdfDocumentProps>(({ result }, re
                     <p className="font-semibold text-gray-800">{item.name}</p>
                     <p className="text-xs text-gray-500">{item.description}</p>
                 </div>
-                <p className="font-semibold text-gray-900 text-lg">${item.price.toLocaleString('es-MX')}</p>
+                <p className="font-semibold text-gray-900 text-lg">${(Number(item.price) > 0 ? item.price : effectivePrice).toLocaleString('es-MX')}</p>
               </div>
             ))}
           </div>
@@ -93,7 +105,7 @@ const PdfDocument = forwardRef<HTMLDivElement, PdfDocumentProps>(({ result }, re
           <div className="flex justify-end items-center text-right">
               <div>
                 <p className="text-gray-500 font-semibold">TOTAL A INVERTIR:</p>
-                <p className="text-4xl font-extrabold text-amber-600">${result.totalPrice.toLocaleString('es-MX')} <span className="text-2xl font-bold text-gray-800">MXN</span></p>
+                <p className="text-4xl font-extrabold text-amber-600">${effectivePrice.toLocaleString('es-MX')} <span className="text-2xl font-bold text-gray-800">MXN</span></p>
                 <p className="text-xs text-gray-500 mt-1">*Costos aproximados, pueden variar.</p>
               </div>
           </div>
